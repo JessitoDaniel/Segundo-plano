@@ -6,9 +6,8 @@
 
     <application>
         <meta-data
-            android:name="org.godotengine.plugin.v2.GodotAndroidPlugin"
+            android:name="org.godotengine.plugin.v2.GodotReproductor"
             android:value="org.godotengine.plugin.android.template.GodotAndroidPlugin"/>
-
         <service
             android:name="org.godotengine.plugin.android.template.MusicService"
             android:foregroundServiceType="mediaPlayback"
