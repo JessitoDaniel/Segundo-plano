@@ -1,26 +1,32 @@
-// TODO: Update to match your plugin's package name.
 package org.godotengine.plugin.android.template
 
-import android.util.Log
-import android.widget.Toast
+import android.content.Intent
 import org.godotengine.godot.Godot
 import org.godotengine.godot.plugin.GodotPlugin
 import org.godotengine.godot.plugin.UsedByGodot
 
-class GodotAndroidPlugin(godot: Godot): GodotPlugin(godot) {
+class GodotAndroidPlugin(godot: Godot) : GodotPlugin(godot) {
 
-    override fun getPluginName() = BuildConfig.GODOT_PLUGIN_NAME
+    override fun getPluginName() = "GodotAndroidPlugin"
 
-    /**
-     * Example showing how to declare a method that's used by Godot.
-     *
-     * Shows a 'Hello World' toast.
-     */
-    @UsedByGodot
-    fun helloWorld() {
-        runOnHostThread {
-            Toast.makeText(activity, "Hello World", Toast.LENGTH_LONG).show()
-            Log.v(pluginName, "Hello World")
-        }
+    private fun enviar(accion: String, extras: Intent.() -> Unit = {}) {
+        val ctx = activity ?: return
+        val i = Intent(ctx, MusicService::class.java).setAction(accion).apply(extras)
+        ctx.startForegroundService(i)
     }
+
+    @UsedByGodot
+    fun iniciar(lista: Array<String>, indice: Int) = enviar("INICIAR") {
+        putStringArrayListExtra("lista", ArrayList(lista.toList()))
+        putExtra("indice", indice)
+    }
+
+    @UsedByGodot fun alternarPausa() = enviar("PAUSA")
+    @UsedByGodot fun siguiente() = enviar("SIGUIENTE")
+    @UsedByGodot fun saltar(ms: Int) = enviar("SALTAR") { putExtra("ms", ms) }
+    @UsedByGodot fun detener() = enviar("DETENER")
+
+    @UsedByGodot fun nombreActual(): String = MusicService.nombreActual
+    @UsedByGodot fun estaPausado(): Boolean = MusicService.pausado
+    @UsedByGodot fun posicionMs(): Int = MusicService.instance?.posicionMs() ?: 0
 }
